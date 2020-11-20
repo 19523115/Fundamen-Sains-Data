@@ -1,0 +1,47 @@
+---
+title: "Hierarchical Clustering Single Linkage"
+output:
+  html_document:
+    df_print: paged
+---
+
+
+```{r}
+USArrests
+```
+
+```{r}
+summary(USArrests)
+```
+
+```{r}
+df_single <- data.frame(States=rownames(USArrests), USArrests)
+par(las=2) # make label text perpendicular to axis
+par(mar=c(5,8,4,2)) # increase y-axis margin.
+barplot(df_single$Murder, names.arg = df_single$States, horiz = TRUE, cex.names = 0.5, xlab = "Murder Arrest per 100.000")
+```
+
+```{r}
+barplot(df_single$Assault, names.arg = df_single$States, horiz = TRUE, cex.names = 0.5, xlab = "Assault Arrest per 100.000")
+```
+
+```{r}
+barplot(df_single$Rape, names.arg = df_single$States, horiz = TRUE, cex.names = 0.5, xlab = "Rape Arrest per 100.000")
+```
+
+```{r}
+barplot(df_single$UrbanPop, names.arg = df_single$States, horiz = TRUE, cex.names = 0.5, xlab = "Polulation in urban area")
+```
+
+```{r}
+df_single <- scale(df_single[, 2:5])
+d_single <- dist(df_single, method = "euclidean")
+clusters_single <- hclust(d_single, method = "single" ) ##Metode Single
+plot(clusters_single, cex = 0.6, hang = -1)
+```
+
+```{r}
+plot(clusters_single, cex = 0.6, hang = -1)
+rect.hclust(clusters_single, k = 4, border = 2:5)
+```
+

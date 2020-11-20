@@ -1,0 +1,47 @@
+---
+title: "Hierarchical Clustering Average Linkage"
+output:
+  html_document:
+    df_print: paged
+---
+
+
+```{r}
+USArrests
+```
+
+```{r}
+summary(USArrests)
+```
+
+```{r}
+df_average <- data.frame(States=rownames(USArrests), USArrests)
+par(las=2) # make label text perpendicular to axis
+par(mar=c(5,8,4,2)) # increase y-axis margin.
+barplot(df_average$Murder, names.arg = df_average$States, horiz = TRUE, cex.names = 0.5, xlab = "Murder Arrest per 100.000")
+```
+
+```{r}
+barplot(df_average$Assault, names.arg = df_average$States, horiz = TRUE, cex.names = 0.5, xlab = "Assault Arrest per 100.000")
+```
+
+```{r}
+barplot(df_average$Rape, names.arg = df_average$States, horiz = TRUE, cex.names = 0.5, xlab = "Rape Arrest per 100.000")
+```
+
+```{r}
+barplot(df_average$UrbanPop, names.arg = df_average$States, horiz = TRUE, cex.names = 0.5, xlab = "Polulation in urban area")
+```
+
+```{r}
+df_average <- scale(df_average[, 2:5])
+d_average <- dist(df_average, method = "euclidean")
+clusters_average <- hclust(d_average, method = "average" ) ##Metode Average
+plot(clusters_average, cex = 0.6, hang = -1)
+```
+
+```{r}
+plot(clusters_average, cex = 0.6, hang = -1)
+rect.hclust(clusters_average, k = 4, border = 2:5)
+```
+

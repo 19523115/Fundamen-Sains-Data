@@ -1,0 +1,102 @@
+---
+title: "Hierarchical Clustering Complate, Single, and Average Linkage"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+<h3>
+Nama : Mahesa Cadi Rajasa (19523122)
+</h3>
+
+```{r}
+USArrests
+```
+
+```{r}
+summary(USArrests)
+```
+
+<h3>Complate Linkage</h3>
+```{r}
+df_complate <- data.frame(States=rownames(USArrests), USArrests)
+par(las=2) # make label text perpendicular to axis
+par(mar=c(5,8,4,2)) # increase y-axis margin.
+
+barplot(df_complate$Murder, names.arg = df_complate$States, horiz = TRUE, cex.names = 0.5, xlab = "Murder Arrest per 100.000")
+
+barplot(df_complate$Assault, names.arg = df_complate$States, horiz = TRUE, cex.names = 0.5, xlab = "Assault Arrest per 100.000")
+
+barplot(df_complate$Rape, names.arg = df_complate$States, horiz = TRUE, cex.names = 0.5, xlab = "Rape Arrest per 100.000")
+
+barplot(df_complate$UrbanPop, names.arg = df_complate$States, horiz = TRUE, cex.names = 0.5, xlab = "Polulation in urban area")
+```
+
+<h3>Single Linkage</h3>
+```{r}
+df_single <- data.frame(States=rownames(USArrests), USArrests)
+par(las=2) # make label text perpendicular to axis
+par(mar=c(5,8,4,2)) # increase y-axis margin.
+
+barplot(df_single$Murder, names.arg = df_single$States, horiz = TRUE, cex.names = 0.5, xlab = "Murder Arrest per 100.000")
+
+barplot(df_single$Assault, names.arg = df_single$States, horiz = TRUE, cex.names = 0.5, xlab = "Assault Arrest per 100.000")
+
+barplot(df_single$Rape, names.arg = df_single$States, horiz = TRUE, cex.names = 0.5, xlab = "Rape Arrest per 100.000")
+
+barplot(df_single$UrbanPop, names.arg = df_single$States, horiz = TRUE, cex.names = 0.5, xlab = "Polulation in urban area")
+```
+
+<h3>Average Linkage</h3>
+```{r}
+df_average <- data.frame(States=rownames(USArrests), USArrests)
+par(las=2) # make label text perpendicular to axis
+par(mar=c(5,8,4,2)) # increase y-axis margin.
+
+barplot(df_average$Murder, names.arg = df_average$States, horiz = TRUE, cex.names = 0.5, xlab = "Murder Arrest per 100.000")
+
+barplot(df_average$Assault, names.arg = df_average$States, horiz = TRUE, cex.names = 0.5, xlab = "Assault Arrest per 100.000")
+
+barplot(df_average$Rape, names.arg = df_average$States, horiz = TRUE, cex.names = 0.5, xlab = "Rape Arrest per 100.000")
+
+barplot(df_average$UrbanPop, names.arg = df_average$States, horiz = TRUE, cex.names = 0.5, xlab = "Polulation in urban area")
+```
+
+<h3>Hierarchical Clustering</h3>
+```{r}
+##Complate Linkage
+df_complate <- scale(df_complate[, 2:5])
+d_complate <- dist(df_complate, method = "euclidean")
+clusters_complate <- hclust(d_complate, method = "complete" )
+plot(clusters_complate, cex = 0.6, hang = -1)
+
+##Single Linkage
+df_single <- scale(df_single[, 2:5])
+d_single <- dist(df_single, method = "euclidean")
+clusters_single <- hclust(d_single, method = "single" ) ##Metode Single
+plot(clusters_single, cex = 0.6, hang = -1)
+
+##Average Linkage
+df_average <- scale(df_average[, 2:5])
+d_average <- dist(df_average, method = "euclidean")
+clusters_average <- hclust(d_average, method = "average" ) ##Metode Average
+plot(clusters_average, cex = 0.6, hang = -1)
+```
+
+```{r}
+## Complate Linkage
+plot(clusters_complate, cex = 0.6, hang = -1)
+rect.hclust(clusters_complate, k = 4, border = 2:5)
+
+##Single Linkage
+plot(clusters_single, cex = 0.6, hang = -1)
+rect.hclust(clusters_single, k = 4, border = 2:5)
+
+##Average Linkage
+plot(clusters_average, cex = 0.6, hang = -1)
+rect.hclust(clusters_average, k = 4, border = 2:5)
+```
+
+<h3>Kesimpulan</h3>
+Dari hasil clustering diatas dapat diketahui bahwa terdapat perbedaan hirarki saat menggunakan metode complate, single, dan average, begitu pun saat dibagi menjadi 4 claster terdapat perbedaan antar metode yang digunakan.
