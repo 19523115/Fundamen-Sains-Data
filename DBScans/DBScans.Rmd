@@ -1,0 +1,108 @@
+---
+title: "Clustering With DBScans"
+output:
+  html_document:
+    df_print: paged
+---
+
+
+```{r}
+library(factoextra)
+data("multishapes")
+df <- multishapes[, 1:2]
+plot(df, pch=16)
+```
+
+```{r}
+set.seed(123)
+km.res <- kmeans(df, 5, nstart = 25)
+fviz_cluster(km.res, df, main = "K-Means", frame = FALSE, geom = "point")
+```
+
+```{r}
+library(fpc)
+set.seed(123)
+db <- dbscan(df, eps = 0.15, MinPts = 5)
+plot(db, df, main = "DBSCAN", frame = FALSE)
+```
+
+```{r}
+library(factoextra)
+fviz_cluster(db, df, stand = FALSE, frame = FALSE, geom = "point")
+```
+
+```{r}
+print(db)
+```
+
+```{r}
+db$cluster
+```
+
+```{r}
+library(dbscan)
+kNNdistplot(df, k = 5)
+abline(h = 0.15, lty = 2)
+```
+<h3>Latihan</h3>
+<h4>1. Jika radius di ubah dan minPts = 5 tetap</h4>
+```{r}
+library(fpc)
+library(factoextra)
+set.seed(123)
+
+##Radius Semakin Besar
+db <- dbscan(df, eps = 0.20, MinPts = 5)
+plot(db, df, main = "DBSCAN-RADIUS_SET_BESAR", frame = FALSE)
+fviz_cluster(db, df, main = "Radius diset besar", stand = FALSE, frame = FALSE, geom = "point")
+
+##Radius Semakin Kecil
+db <- dbscan(df, eps = 0.10, MinPts = 5)
+plot(db, df, main = "DBSCAN-RADIUS_SET_KECIL", frame = FALSE)
+fviz_cluster(db, df, main = "Radius diset kecil", stand = FALSE, frame = FALSE, geom = "point")
+```
+
+```{r}
+library(dbscan)
+
+##Radius Semakin Besar
+kNNdistplot(df, k = 5)
+abline(h = 0.20, lty = 2)
+
+##Radius Semakin Kecil
+kNNdistplot(df, k = 5)
+abline(h = 0.10, lty = 2)
+```
+<h4>2. Jika minPts di ubah dan radius = 0.15 tetap</h4>
+```{r}
+library(fpc)
+library(factoextra)
+set.seed(123)
+
+##Minimal Point Semakin Besar
+db <- dbscan(df, eps = 0.15, MinPts = 10)
+plot(db, df, main = "DBSCAN-MINIMAL_POINT_SET_BESAR", frame = FALSE)
+fviz_cluster(db, df, main = "Minimal point diset besar", stand = FALSE, frame = FALSE, geom = "point")
+
+##Minimal Point Semakin Kecil
+db <- dbscan(df, eps = 0.15, MinPts = 3)
+plot(db, df, main = "DBSCAN-MINIMAL_POINT_SET_KECIL", frame = FALSE)
+fviz_cluster(db, df, main = "Minimal point diset kecil", stand = FALSE, frame = FALSE, geom = "point")
+```
+
+```{r}
+library(dbscan)
+##Minimal Point Semakin Besar
+kNNdistplot(df, k = 10)
+abline(h = 0.15, lty = 2)
+
+##Minimal Point Semakin Kecil
+kNNdistplot(df, k = 3)
+abline(h = 0.15, lty = 2)
+```
+
+<h3>Kesimpulan</h3>
+
+Jika radius di set semakin besar maka beberapa noise akan ikut menjadi bagian dari claster sedangkan jika radius di set semakin kecil maka noise akan bertambah begitupun dengan banyaknya claster yang terbentuk.
+
+Jika minimal point di set semakin besar maka akan terbentuk beberapa claster baru dan noise nya bertambah sedangkan jika minimal point di set semakin kecil maka claster dan noise akan berkurang.
