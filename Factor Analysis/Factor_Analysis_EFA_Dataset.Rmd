@@ -1,0 +1,32 @@
+---
+title: "Factor Analysis EFA Dataset"
+output: html_notebook
+---
+
+
+```{r}
+library(psych)
+myData <- read.csv("dataset_EFA.csv")
+head(myData)
+```
+
+```{r}
+modelFA <- fa(r = myData, nfactors = 2, rotate = "varimax", fm="minres")
+modelFA$loadings
+```
+
+```{r}
+load <- modelFA$loadings[,1:2]
+fa.diagram(modelFA, digits = 2)
+```
+
+```{r}
+plot(load, type="n")
+text(load,labels=names(myData),cex=.7)
+```
+
+```{r}
+library(psy)
+scree.plot(cor(myData))
+```
+

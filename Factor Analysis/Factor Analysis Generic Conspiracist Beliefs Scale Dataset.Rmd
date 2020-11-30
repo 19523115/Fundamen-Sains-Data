@@ -1,0 +1,54 @@
+---
+title: "Factor Analysis Generic Conspiracist Beliefs Scale Dataset"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+<h1>Mahesa Cadi Rajasa (19523122)</h1>
+
+<h3>Latihan<h3>
+
+<h4>1. Download data set dari 2495 repons dari kuisioner Generic Conspiracist Beliefs Scale melalui link
+(harus dalam posisi online)<h4>
+```{r}
+library(psych)
+url <- "https://assets.datacamp.com/production/repositories/2136/datasets/869615371e66021e97829feb7e19e38037ed0c14/GCBS_data.rds"
+theData <- readRDS(gzcon(url(url)))
+head(theData)
+```
+
+<h4>2. Buat scree plot berdasarkan data di atas, dan tentukan jumlah faktor yang tepat berdasarkan scree
+plot tersebut. Dipersilakan menggunakan konsep siku atau Kaiser-Guttman. Jumlah faktor yang Anda
+tentukan, bisa jadi berbeda dengan rekan yang lain; hal ini tidak menjadi masalah, yang lebih penting
+adalah argumentasinya.<h4>
+
+```{r}
+library(psy)
+scree.plot(cor(theData))
+```
+
+Dari hasil scree plot di atas, siku kita temukan pada jumlah faktor = 3, kita akan pakai nilai ini sebagai jumlah faktor.
+
+<h4>5. Berapa total variance yang dijelaskan oleh model yang ditemukan? Apakah cukup besar, atau? Je-
+laskan secara singkat.</h4>
+
+```{r}
+modelFA <- fa(r = theData, nfactors = 3, rotate = "varimax", fm="minres")
+modelFA$loadings
+```
+Pada baris Cumulative var dapat kita lihat besaran variance kumulatif masing-masing faktor adalah MR1 sebesar 24%, MR2 sebesar 42%, dan MR3 sebesar 61%. Dari baris Proportion Var dapat kita lihat besaran variance yang dijelaskan masing-masing faktor, dan jika ditotal kita mendapatkan sekitar 60% total variance. Ini dapat di artikan bahwa model FA yang kita buat di atas merepresentasikan 60% informasi yang dikandung data set yang analisis.
+
+<h4>3. Buat model FA berdasarkan jumlah faktor yang telah ditentukan di atas dan visualisasikan model FA
+tersebut</h4>
+
+```{r}
+load <- modelFA$loadings[,1:2]
+fa.diagram(modelFA, digits = 2)
+```
+
+<h4>4. Ceritakan secara singkat factor loadings yang diestimasi pada model tersebut.</h4>
+
+Dari model Factor Analysis di atas, dapat kita lihat Q11,Q1,Q15,Q6,Q14,Q5,Q10,Q4 berasosiasi disebabkan oleh faktor 1 atau MR1, sedangkan Q8,Q3,Q13 berasosiasi disebabkan oleh faktor 2 atau MR2, dan Q12,Q7,Q2,Q9 berasosiasi disebabkan oleh faktor 3 atau MR3.
+

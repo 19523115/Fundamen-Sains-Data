@@ -1,0 +1,27 @@
+---
+title: "Factor Analysis Room Temperature Dataset"
+output: html_notebook
+---
+
+
+```{r}
+myData <- read.csv("room-temperature.csv")
+head(myData)
+```
+
+```{r}
+library(psych)
+myData <- myData[, 2:5]
+scree.plot(cor(myData))
+```
+
+```{r}
+library(psych)
+faModel <- fa(myData, nfactors = 2, rotate = "varimax", fm="minres")
+fa.diagram(faModel)
+```
+
+```{r}
+faModel$loadings
+```
+
