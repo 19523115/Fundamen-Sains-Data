@@ -1,0 +1,116 @@
+---
+title: "Principal Component Analysis Mtcars Dataset and Iris Dataset"
+output:
+  html_document:
+    df_print: paged
+  html_notebook: default
+  pdf_document: default
+---
+
+<h1>
+Mahesa Cadi Rajasa (19523122)
+Naufal Fadhlurohman (19523216)
+</h1>
+
+<h2>Latihan 1</h2>
+
+```{r}
+dataMPG <- mtcars[, -c(8,9)]
+head(dataMPG)
+```
+
+
+```{r}
+par(mfrow=c(2,2))
+for(i in 1:ncol(dataMPG)) { hist(dataMPG[, i], main = paste(colnames(dataMPG[i])), xlab = "") }
+```
+
+
+```{r}
+mtcarsPca <- prcomp(dataMPG, scale. = TRUE, center=TRUE)
+mtcarsPca$rotation
+```
+
+
+```{r}
+library(factoextra)
+fviz_pca_biplot(mtcarsPca, repel = TRUE,
+col.var = "#2E9FDF",
+col.ind = "#696969"
+)
+```
+1. Dari biplot di atas, sumbu horizontal (Dim1) merepresentasikan principal component yang pertama, yang
+mengandung 62.8% variance dari seluruh data set; sumbu vertikal (Dim2) merepresentasikan principal compo-
+nent kedua, yang mengandung 23.1% variance. Dari dua component ini saja, 85.9% variance atau informasi
+yang dikandung data dapat dijelaskan.
+
+2. Dari plot tersebut, dapat kita lihat arah vektor qsec dan gear cenderung vertikal seperti arah principal 
+component yang pertama(Dim1). Ini mengindikasikan bahwa variable qsec dan gear lebih banyak 
+dijelaskan/diwakili oleh principal komponen yang pertama. Sebaliknya, arah vektor drat, mpg, carb, hp, cyl, 
+disp, dan wt lebih mendekati arah principal component yang kedua (Dim2). Ini mengindikasikan jika informasi
+yang dibawa variabel drat, mpg, carb, hp, cyl, disp, dan wt lebih banyak diwakili oleh principal 
+component yang kedua.
+
+3. Dalam pemakaian bahan bakar (mpg), Datsun 710 lebih hemat pemakaian bahan bakarnya dibandingkan 
+Merc 450SLC karena lebih searah dengan vektor (mpg). Sebaliknya Merc 450SLC boros dalam pemakaian bahan bakar
+karena berlawanan arah dengan vektor (mpg).
+
+4. Mobil-mobil yang daya pacunya besar (hp) dari mobil lain-lainnya yaitu: Camaro Z28, Duster 360.
+
+
+```{r}
+fviz_eig(mtcarsPca)
+```
+
+<h2>Latihan 2</h2>
+
+Kami akan menggunakan data set Iris dari package datasets, data berisi 3 kelas masing-masing 50 instans, di mana setiap kelas mengacu pada jenis tanaman iris. Pertama, mari kita lihat bentuk dan sebaran datanya.
+
+```{r}
+dataIris <- iris[, -c(5,6)]
+head(dataIris)
+```
+
+```{r}
+par(mfrow=c(2,2))
+for(i in 1:ncol(dataIris)) { hist(dataIris[, i], main = paste(colnames(dataIris[i])), xlab = "") }
+```
+
+Selanjutnya, kami akan mengaplikasikan PCA pada data tersebut, menggunkaan fungsi prcomp() dari package
+stats. Parameter scale=TRUE, center=TRUE memastikan nilai setiap variabel distandarisasi, sehingga
+semua variabel memiliki skala nilai yang sama.
+
+```{r}
+irisPCA <- prcomp(dataIris, scale. = TRUE, center=TRUE)
+irisPCA$rotation
+```
+Selanjutnya, agar mudah kami memvisualisasikan biplot nya.
+```{r}
+library(factoextra)
+fviz_pca_biplot(irisPCA, repel = TRUE,
+col.var = "#2E9FDF",
+col.ind = "#696969"
+)
+```
+
+Dari biplot di atas, sumbu horizontal (Dim1) merepresentasikan principal component yang pertama, yang
+mengandung 73% variance dari seluruh data set; sumbu vertikal (Dim2) merepresentasikan principal compo-
+nent kedua, yang mengandung 22.9% variance. Dari dua component ini saja, 95.9% variance atau informasi
+yang dikandung data dapat dijelaskan.
+
+Dari plot tersebut, dapat kita lihat arah vektor Sepal.Width cenderung vertikal seperti arah principal 
+component yang pertama(Dim1). Ini mengindikasikan bahwa variable Sepal.Widthr lebih banyak 
+dijelaskan/diwakili oleh principal komponen yang pertama. Sebaliknya, arah vektor Sepal.Length, Petal.Width, dan Petal.Length lebih mendekati arah principal component yang kedua (Dim2). Ini mengindikasikan jika informasi
+yang dibawa variabel Sepal.Length, Petal.Width, dan Petal.Length lebih banyak diwakili oleh principal 
+component yang kedua.
+
+Selanjutnya kami memvisualisasikan variance yang dibawa setiap component melalui screeplot sebagai
+berikut.
+
+```{r}
+fviz_eig(irisPCA)
+```
+
+Kesimpulan
+Kita hanya butuh dua “variabel” (principal component) saja untuk merepresentasikan hampir
+96% informasi yang ada di data. Ini adalah semangat dimensionality reduction yang menjadi tujuan PCA.

@@ -1,0 +1,68 @@
+---
+title: "Principal Component Analysis USArrests Dataset and MTCars Dataset"
+output:
+  html_document:
+    df_print: paged
+  html_notebook: default
+  pdf_document: default
+---
+
+
+```{r}
+data("USArrests")
+head(USArrests)
+```
+
+```{r}
+par(mfrow=c(2,2))
+for(i in 1:ncol(USArrests)) { hist(USArrests[, i], main = paste(colnames(USArrests[i])), xlab = "") }
+```
+
+```{r}
+pcaModel <- prcomp(USArrests, scale. = TRUE, center = TRUE)
+pcaModel$rotation
+```
+
+```{r}
+library(factoextra)
+fviz_pca_biplot(pcaModel, repel = TRUE,
+
+col.var = "#2E9FDF", # Variables color
+col.ind = "#696969" # Individuals color
+
+)
+```
+
+```{r}
+fviz_eig(pcaModel)
+```
+
+Contoh 2
+
+```{r}
+dataMPG <- mtcars[, -c(8,9)]
+head(dataMPG)
+```
+
+```{r}
+par(mfrow=c(2,2))
+for(i in 1:ncol(dataMPG)) { hist(dataMPG[, i], main = paste(colnames(dataMPG[i])), xlab = "") }
+```
+
+```{r}
+mtcarsPca <- prcomp(dataMPG, scale. = TRUE, center=TRUE)
+mtcarsPca$rotation
+```
+
+```{r}
+library(factoextra)
+fviz_pca_biplot(mtcarsPca, repel = TRUE,
+col.var = "#2E9FDF",
+col.ind = "#696969"
+)
+```
+
+```{r}
+fviz_eig(mtcarsPca)
+```
+
