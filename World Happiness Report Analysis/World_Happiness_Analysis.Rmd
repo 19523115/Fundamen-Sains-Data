@@ -1,0 +1,33 @@
+---
+title: "World Happiness Report Analysis Naive Bayes"
+output:
+  html_document:
+    df_print: paged
+---
+
+Pertama kita import terlebih dahula dataset World Happiness Report 2016 "2016.csv".
+```{r}
+library(readr)
+data1 <- read_csv("2016.csv")
+head(data1)
+```
+
+```{r}
+library(naivebayes)
+model_fit1 <- lm(Freedom~Family+Region, data = data1)
+model_fit2 <- lm(Freedom~Family+Region, data = data1)
+summary(model_fit1)
+summary(model_fit2)
+```
+
+```{r}
+library(predict3d)
+ggPredict(model_fit1)
+ggPredict(model_fit1, show.error = TRUE, facet.modx = TRUE, show.text = FALSE)
+```
+
+```{r}
+ggPredict(model_fit2)
+ggPredict(model_fit2, xpos = 0.75, vjust = 1.5, show.error = TRUE)
+```
+

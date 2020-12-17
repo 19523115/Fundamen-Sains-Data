@@ -1,0 +1,158 @@
+---
+title: Analisis Tipe Wine menggunakan K-Means, Hierarchical Clustering dan Factor
+  Analisis
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+<h1>NAUFAL FADHLUROHMAN (19523216)</h1>
+<h1>MAHESA CADI RAJASA (19523122)</h1>
+
+<h2>K-Means Clustering</h2>
+Kami akan melakukan clustering tipe-tipe wine pada dataset Wine yang di dapat dari kaggle
+Pertama mari kita load beberapa library yang mungkin akan digunakan
+```{r}
+library(tidyverse)
+library(corrplot)
+library(gridExtra)
+library(GGally)
+library(knitr)
+```
+
+Kemudian load dataset wine nya. Kita tidak memerlukan kolom Customer_Segment. Karena k-means adalah unsupervised machine learning algorithm dan hanya bekerja pada unlabeled data.
+```{r}
+library(readr)
+datawine <- read_csv("Wine.csv")
+datawine <- datawine[, -14]
+head(datawine)
+```
+Selanjunjutnya kami melihat summary dan strutuk datasetnya
+```{r}
+summary(datawine)
+```
+
+```{r}
+str(datawine)
+```
+
+Baiklah setelah melihat-lihat datasetnya kami mulai memvisualisasikannya ke histogram dan mengekplorasinya lebih dalam lagi.
+```{r}
+##Data Wine Histogram
+datawine %>%
+  gather(Attributes, value, 1:13) %>%
+  ggplot(aes(x=value, fill=Attributes)) +
+  geom_histogram(colour="black", show.legend=FALSE) +
+  facet_wrap(~Attributes, scales="free_x") +
+  labs(x="Values", y="Frequency",
+       title="Data Wine - Histograms") +
+  theme_bw()
+```
+
+Bagaimana kalau visualisasikan densitynya juga.
+```{r}
+##Data Wine Density
+datawine %>%
+  gather(Attributes, value, 1:13) %>%
+  ggplot(aes(x=value, fill=Attributes)) +
+  geom_density(colour="black", alpha=0.5, show.legend=FALSE) +
+  facet_wrap(~Attributes, scales="free_x") +
+  labs(x="Values", y="Density",
+       title="Data Wine - Density plots") +
+  theme_bw()
+```
+
+Kami bertanya-tanya bagaimana caranya mengetahui hubungan antar atribut yang berbeda, yang akhirnya kami menggunakan fungsi corrplot() untuk membuat atau menampilakn sebuah correlation matrix.
+```{r}
+corrplot(cor(datawine), type="upper", method="ellipse", tl.cex=0.9)
+```
+Kami menemukan hubungan yang kuat antara Total_Phenols dan Flavanoids. Kita bisa memvisualisasikan model hubungan antara atribut tersebut menggunakan ggplot.
+```{r}
+ggplot(datawine, aes(x=Total_Phenols, y=Flavanoids)) +
+  geom_point() +
+  geom_smooth(method="lm", se=FALSE) +
+  labs(title="Data Wine",
+       subtitle="Hubungan antara Phenols dan Flavanoids") +
+  theme_bw()
+```
+
+Nahh, kita bisa lihat hubungan antara Total_Phenols dan Flavanoids yang di fitting sebuah garis linier equation. Kami sudah selesai mengekplorasi data, selanjutnya kami mempersiapkan data untuk dieksekusi menggunakan k-means.
+
+Pertama, kami mencari angka yang optimal untuk clustering menggunakan elbow method "wss" dan nantinya angka yang didapat akan digunakan untuk clustering di k-means.
+```{r}
+library(factoextra)
+set.seed(123)
+fviz_nbclust(datawine, kmeans, method = "wss")
+```
+
+Bisa kita lihat hasil elbow method yang kami lakukan, didapat optimal number 2. Tetapi untuk lebih memastikan kami melakukan clustering menggunakan dua angka optimal yang berbeda yaitu 2 dan 3. 
+```{r}
+library(cluster)
+k2 <- kmeans(datawine, centers = 2, nstart = 25)
+k3 <- kmeans(datawine, centers = 3, nstart = 25)
+fviz_cluster(k2, data = datawine)
+fviz_cluster(k3, data = datawine)
+```
+
+```{r}
+k2
+```
+
+```{r}
+k3
+```
+
+Dari hasil clustering diatas dapat kita lihat pembagian ukuran yang rata adalah cluster=3, jadi kami mendapatkan kesimpulan dataset wine ini bisa atau memungkinkan untuk dibagi menjadi 3 tipe wine.
+
+Berikut dibawah ini adalah cluster plot dari data wine.
+```{r}
+ggpairs(cbind(datawine, Cluster=as.factor(k3$cluster)),
+        columns=1:6, aes(colour=Cluster, alpha=0.5),
+        lower=list(continuous="points"),
+        upper=list(continuous="blank"),
+        axisLabels="none", switch="both") +
+        theme_bw()
+```
+
+<h2>Hierarchical Clustering Complate Linkage</h2>
+
+Kemudian kami melakukan hirarchical clustering complate linkage untuk lebih memastikan apakah data wine akan bagus jika dibagi menjadi 3 tipe wine.
+```{r}
+df_complate <- data.frame(States=rownames(datawine), datawine)
+par(las=2) # make label text perpendicular to axis
+par(mar=c(5,8,4,2)) # increase y-axis margin.
+
+df_complate <- scale(df_complate[, 2:5])
+d_complate <- dist(df_complate, method = "euclidean")
+clusters_complate <- hclust(d_complate, method = "complete")
+plot(clusters_complate, cex = 0.6, hang = -1)
+rect.hclust(clusters_complate, k = 3, border = 2:5)
+```
+Dapat dilihat dari hasil clustering diatas kita mendapati pembagian data yang tidak rata antara cluster 1(merah) dan cluster 2 (hijau) dan cluster 3 (biru).
+
+<h2>Factor Analysis</h2>
+Selanjunya kami menganalisis faktor dari dataset wine tersebut menggunakan Factor Analysis. Pertama kami cari terlebih dahulu jumlah faktor yang tepat dengan menggunakan scree plot
+```{r}
+library(psych)
+library(psy)
+scree.plot(cor(datawine))
+```
+
+Dari hasil scree plot diatas kita mendapatkan jumlah faktor = 3, kita akan pakai nilai ini sebagai jumlah faktor.
+
+Selanjutnya kami mencari variance dari dataset wine tersebut
+```{r}
+modelFA <- fa(r = datawine, nfactors = 3, rotate = "varimax", fm="minres")
+modelFA$loadings
+```
+
+Pada baris Cumulative var dapat kita lihat besaran variance kumulatif masing-masing faktor adalah MR1 sebesar 30%, MR2 sebesar 49%, dan MR3 sebesar 58%. Dari baris Proportion Var dapat kita lihat besaran variance yang dijelaskan masing-masing faktor, dan jika ditotal kita mendapatkan sekitar 58% total variance. Ini dapat di artikan bahwa model FA yang kita buat di atas merepresentasikan 58% informasi yang dikandung data set yang analisis.
+
+Selanjutnya kita memodelkan data menggunakan jumlah faktor yang sudah kita dapatkan sebelumnya.
+```{r}
+load <- modelFA$loadings[,1:2]
+fa.diagram(modelFA, digits = 2)
+```
+
+Dari model Factor Analysis di atas, dapat kita lihat Flavanoids, OD280, Total_Phenols, Hue, Proanthocyanins, Nonflavanoid_Phenols, Malic_Acid berasosiasi disebabkan oleh faktor 1 atau MR1, sedangkan Alcohol, Proline, Color_Intensity, Magnesium berasosiasi disebabkan oleh faktor 2 atau MR2, dan Ash_Alcanity, Ash berasosiasi disebabkan oleh faktor 3 atau MR3.
